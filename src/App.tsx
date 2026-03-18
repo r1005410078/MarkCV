@@ -47,7 +47,6 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
-import { jsPDF } from 'jspdf';
 import { optimizeContent } from './services/geminiService';
 import { TemplateType, DEFAULT_MARKDOWN, TEMPLATES, Version } from './types';
 
@@ -275,61 +274,10 @@ export default function App() {
     }
   };
 
-  const handlePrint = () => {
-    // Try native print first
+  const handleExportPDF = () => {
     try {
       window.focus();
       window.print();
-      
-      confetti({
-        particleCount: 30,
-        spread: 40,
-        origin: { y: 0.1, x: 0.9 }
-      });
-    } catch (err) {
-      console.error('Print failed, falling back to PDF download:', err);
-      handleExportPDF();
-    }
-  };
-
-  const handleExportPDF = async () => {
-    if (!previewRef.current) return;
-    
-    try {
-      setIsProcessing(true);
-      const dataUrl = await toPng(previewRef.current, {
-        quality: 1.0,
-        pixelRatio: 2,
-        backgroundColor: '#fff'
-      });
-      
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: 'a4'
-      });
-      
-      const imgProps = pdf.getImageProperties(dataUrl);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const totalImgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      
-      let heightLeft = totalImgHeight;
-      let position = 0;
-
-      // Add first page
-      pdf.addImage(dataUrl, 'PNG', 0, position, pdfWidth, totalImgHeight);
-      heightLeft -= pageHeight;
-
-      // Add subsequent pages if needed
-      while (heightLeft > 0) {
-        position = heightLeft - totalImgHeight;
-        pdf.addPage();
-        pdf.addImage(dataUrl, 'PNG', 0, position, pdfWidth, totalImgHeight);
-        heightLeft -= pageHeight;
-      }
-      
-      pdf.save(`markdesign-${template}-${Date.now()}.pdf`);
       
       confetti({
         particleCount: 100,
@@ -337,9 +285,7 @@ export default function App() {
         origin: { y: 0.6 }
       });
     } catch (err) {
-      console.error('PDF Export failed:', err);
-    } finally {
-      setIsProcessing(false);
+      console.error('Print failed:', err);
     }
   };
 
@@ -529,7 +475,7 @@ export default function App() {
                 <button 
                   onClick={handleExportPDF}
                   className="p-2.5 text-slate-500 hover:text-indigo-600 bg-white/50 hover:bg-white backdrop-blur-sm hover:shadow-xl border border-white/20 hover:border-slate-100 rounded-xl transition-all active:scale-95"
-                  title="下载 PDF"
+                  title="打印 / 导出 PDF"
                 >
                   <Printer size={18} />
                 </button>
@@ -710,41 +656,7 @@ export default function App() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Floating AI Toolbar (Only in Design Mode) */}
-        <AnimatePresence>
-          {viewMode === 'design' && showAiToolbar && (
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.9 }}
-              style={{ left: aiToolbarPos.x, top: aiToolbarPos.y }}
-              className="fixed z-[100] bg-white shadow-2xl rounded-2xl border border-slate-200 p-1 flex gap-1 items-center"
-            >
-              <button 
-                onClick={() => handleAiAction("Optimize the formatting of this resume section for better readability and structure.")}
-                className="p-2 hover:bg-indigo-50 text-indigo-600 rounded-xl transition-all flex items-center gap-2 text-xs font-bold"
-              >
-                <Layout size={14} /> 格式优化
-              </button>
-              <div className="w-px h-4 bg-slate-200 mx-1" />
-              <button 
-                onClick={() => handleAiAction("Optimize the wording of this resume content to be more professional, impactful, and action-oriented.")}
-                className="p-2 hover:bg-slate-50 text-slate-600 rounded-xl transition-all flex items-center gap-2 text-xs font-bold"
-              >
-                <Wand2 size={14} /> 话术优化
-              </button>
-              <button 
-                onClick={() => handleAiAction("Translate this resume content to English professionally.")}
-                className="p-2 hover:bg-slate-50 text-slate-600 rounded-xl transition-all flex items-center gap-2 text-xs font-bold"
-              >
-                <Languages size={14} /> 英文翻译
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </main>
-
 
       {/* Processing Overlay */}
       <AnimatePresence>
