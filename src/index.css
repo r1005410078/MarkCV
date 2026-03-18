@@ -102,6 +102,18 @@
   @apply border-white/10;
 }
 
+/* Custom Selection Style */
+::selection {
+  background-color: #4f46e5 !important; /* indigo-600 */
+  color: #ffffff !important; /* white */
+}
+
+.markdesign-editor textarea::selection {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important; /* Force text color in some browsers */
+}
+
 /* Prism Editor Highlighting */
 .markdesign-editor .token.header { @apply text-indigo-600 font-bold; }
 .markdesign-editor .token.bold { @apply font-bold; }

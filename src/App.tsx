@@ -311,9 +311,24 @@ export default function App() {
       
       const imgProps = pdf.getImageProperties(dataUrl);
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const totalImgHeight = (imgProps.height * pdfWidth) / imgProps.width;
       
-      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      let heightLeft = totalImgHeight;
+      let position = 0;
+
+      // Add first page
+      pdf.addImage(dataUrl, 'PNG', 0, position, pdfWidth, totalImgHeight);
+      heightLeft -= pageHeight;
+
+      // Add subsequent pages if needed
+      while (heightLeft > 0) {
+        position = heightLeft - totalImgHeight;
+        pdf.addPage();
+        pdf.addImage(dataUrl, 'PNG', 0, position, pdfWidth, totalImgHeight);
+        heightLeft -= pageHeight;
+      }
+      
       pdf.save(`markdesign-${template}-${Date.now()}.pdf`);
       
       confetti({
