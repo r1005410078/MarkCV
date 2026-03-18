@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+/* Markdown Styling Overrides */
+.markdown-body {
+  @apply text-inherit leading-relaxed;
+}
+
+.markdown-body h1 {
+  @apply text-4xl font-bold mb-6 mt-0 border-none pb-0 tracking-tight;
+}
+
+.markdown-body h2 {
+  @apply text-xl font-semibold mb-4 mt-0 border-none pb-0 text-slate-500 uppercase tracking-wider;
+}
+
+.markdown-body h3 {
+  @apply text-lg font-bold mb-3 mt-8 border-b border-slate-200 pb-1 flex items-center gap-2;
+}
+
+.markdown-body h4 {
+  @apply text-base font-bold mb-2 mt-4 text-slate-800;
+}
+
+.markdown-body p {
+  @apply mb-4 leading-relaxed text-inherit;
+}
+
+.markdown-body ul, .markdown-body ol {
+  @apply mb-6 pl-5 space-y-2 list-none;
+}
+
+.markdown-body li {
+  @apply relative;
+}
+
+.markdown-body ul li::before {
+  content: "•";
+  @apply absolute -left-5 text-indigo-500 font-bold;
+}
+
+.markdown-body hr {
+  @apply my-8 border-slate-200 border-t-2;
+}
+
+.markdown-body blockquote {
+  @apply border-l-4 border-indigo-500 pl-4 italic my-6 text-slate-500 bg-slate-50 py-2 pr-4 rounded-r-lg;
+}
+
+.markdown-body strong {
+  @apply font-bold text-slate-900;
+}
+
+.markdown-body a {
+  @apply text-indigo-600 underline decoration-indigo-300 underline-offset-4 hover:text-indigo-800 transition-colors;
+}
+
+.markdown-body table {
+  @apply w-full mb-6 border-collapse border border-slate-200;
+}
+
+.markdown-body th, .markdown-body td {
+  @apply border border-slate-200 p-2 text-sm;
+}
+
+.markdown-body th {
+  @apply bg-slate-50 font-bold text-slate-700;
+}
+
+.markdown-body .task-list-item {
+  @apply list-none pl-0;
+}
+
+.markdown-body .task-list-item input {
+  @apply mr-2;
+}
+
+/* Template Specific Overrides */
+.prose-invert h1, .prose-invert h2, .prose-invert h3, .prose-invert h4, .prose-invert strong {
+  @apply text-white;
+}
+
+.prose-invert h3 {
+  @apply border-white/20;
+}
+
+.prose-invert ul li::before {
+  @apply text-indigo-400;
+}
+
+.prose-invert hr {
+  @apply border-white/10;
+}
+
+/* Prism Editor Highlighting */
+.markdesign-editor .token.header { @apply text-indigo-600 font-bold; }
+.markdesign-editor .token.bold { @apply font-bold; }
+.markdesign-editor .token.italic { @apply italic; }
+.markdesign-editor .token.list { @apply text-emerald-600; }
+.markdesign-editor .token.code { @apply text-amber-600 bg-slate-50 px-1 rounded; }
+.markdesign-editor .token.url { @apply text-blue-500 underline; }
+.markdesign-editor .token.blockquote { @apply text-slate-400 italic; }
+.markdesign-editor .token.hr { @apply text-slate-300; }
+.markdesign-editor .token.punctuation { @apply text-slate-400; }
+
+/* Remove Editor Focus Outline */
+.markdesign-editor textarea:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
+}
+
+/* Print Styles */
+@media print {
+  nav, 
+  .fixed, 
+  .absolute, 
+  button, 
+  .z-[100], 
+  .z-[130] {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Ensure the preview container takes full width and has no extra padding */
+  .pt-24, .pb-48, .px-6 {
+    padding: 0 !important;
+  }
+
+  /* Force background colors and images in print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
